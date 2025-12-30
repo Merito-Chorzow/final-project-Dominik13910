@@ -45,3 +45,7 @@ void FanController::update(int tempRaw) {
 State FanController::getState() const {
   return state;
 }
+
+int FanController::getLastPwm() const {
+  return lastPwm;
+}

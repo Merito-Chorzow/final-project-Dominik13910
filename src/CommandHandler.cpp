@@ -1,7 +1,7 @@
 #include "CommandHandler.h"
 #include <Arduino.h>
 #include "Config.h"
-
+#include "Telemetry.h"
 void handleCommand(const String& cmd) {
 
   if (cmd.startsWith("SET START ")) {
@@ -27,6 +27,16 @@ void handleCommand(const String& cmd) {
     Serial.print("MINPWM="); Serial.println(Config::MIN_PWM);
     Serial.print("MAXPWM="); Serial.println(Config::MAX_PWM);
   }
+  else if (cmd == "GET STATUS") {
+  extern Telemetry telemetry;
+
+  Serial.println("=== STATUS ===");
+  Serial.print("TEMP_RAW="); Serial.println(telemetry.lastTempRaw);
+  Serial.print("PWM=");      Serial.println(telemetry.lastPwm);
+  Serial.print("FAULTS=");   Serial.println(telemetry.faultCount);
+  Serial.print("SENS_ERR="); Serial.println(telemetry.sensorErrors);
+}
+
   else {
     Serial.println("ERR Unknown command");
   }
