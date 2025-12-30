@@ -1,7 +1,6 @@
 #include <Arduino.h>
-
-#include "Sensor.h"
 #include "FanController.h"
+#include "Sensor.h"
 #include "CommandHandler.h"
 #include "Config.h"
 #include "Telemetry.h"
@@ -20,31 +19,34 @@ void setup() {
 }
 
 void loop() {
-
   if (Serial.available()) {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
     handleCommand(cmd);
   }
 
-
   unsigned long now = millis();
   if (now - lastControlTick >= CONTROL_INTERVAL_MS) {
     lastControlTick = now;
 
-int temp = sensor.readRaw();
-telemetry.lastTempRaw = temp;
+    int temp = sensor.readRaw();
+    telemetry.lastTempRaw = temp;
 
-if (temp == 0) {
-  telemetry.sensorErrors++;
-}
+    if (temp == 0) {
+      telemetry.sensorErrors++;
+    }
 
-controller.update(temp);
-telemetry.lastPwm = controller.getLastPwm();
+    controller.update(temp);
+    telemetry.lastPwm = controller.getLastPwm();
 
-if (controller.getState() == State::FAULT) {
-  telemetry.faultCount++;
-}
+    static FanController::State prevState = FanController::State::INIT;
+    FanController::State currentState = controller.getState();
 
+    if (currentState == FanController::State::FAULT &&
+        prevState != FanController::State::FAULT) {
+      telemetry.faultCount++;
+    }
+
+    prevState = currentState;
   }
 }

@@ -4,7 +4,7 @@ namespace Config {
   inline int START_THRESHOLD = 1200;
   inline int STOP_THRESHOLD  = 1000;
 
-  inline int MIN_PWM = 80;
+  inline int MIN_PWM = 10;
   inline int MAX_PWM = 255;
 
   constexpr int TEMP_PIN = 34;
